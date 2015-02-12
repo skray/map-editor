@@ -30,11 +30,13 @@ var paths = {
 var jsdeps = [
     'node_modules/leaflet/dist/leaflet.js',
     'node_modules/jquery/dist/jquery.min.js',
-    'node_modules/transparency/dist/transparency.min.js'
+    'node_modules/transparency/dist/transparency.min.js',
+    'node_modules/leaflet-draw/dist/leaflet.draw.js'
 ];
 
 var cssdeps = [
-    'node_modules/leaflet/dist/leaflet.css'
+    'node_modules/leaflet/dist/leaflet.css',
+    'node_modules/leaflet-draw/dist/leaflet.draw.css'
 ];
 
 gulp.task('clean', function(cb) {
@@ -55,9 +57,13 @@ gulp.task('concat-js', ['clean'], function() {
 
 gulp.task('concat', ['concat-css', 'concat-js']);
 
+gulp.task('copy-draw-images', ['clean'], function() {
+    return gulp.src(['node_modules/leaflet-draw/dist/images/**'])
+      .pipe(gulp.dest('public/images'));
+});
 
 gulp.task('copy-images', ['clean'], function() {
-    return gulp.src(['node_modules/leaflet/dist/images/**'])
+    return gulp.src(['node_modules/leaflet/dist/images/**','node_modules/leaflet-draw/dist/images/**'])
       .pipe(gulp.dest('public/maps/images'));
 });
 
@@ -67,7 +73,7 @@ gulp.task('copy-src', ['clean'], function() {
       .pipe(livereload());
 });
 
-gulp.task('copy', ['copy-images', 'copy-src']);
+gulp.task('copy', ['copy-images', 'copy-draw-images', 'copy-src']);
 
 
 gulp.task('deploy', ['build'], function () {
