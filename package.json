@@ -4,7 +4,7 @@
     "dependencies": {
         "transparency": "0.10.0",
         "leaflet-draw": "0.2.3",
-        "leaflet": "0.7.3"    
+        "leaflet": "0.7.3"
     },
     "devDependencies": {
         "del": "1.1.1",
