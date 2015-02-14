@@ -5,6 +5,11 @@ var path = require('path');
 var del  = require('del');
 var deploy = require('gulp-gh-pages');
 var livereload = require('gulp-livereload');
+var sourcemaps = require('gulp-sourcemaps');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var watchify = require('watchify');
+var browserify = require('browserify');
 
 var EXPRESS_PORT = 8000;
 var EXPRESS_ROOT = 'public';
@@ -39,6 +44,15 @@ var cssdeps = [
     'node_modules/leaflet-draw/dist/leaflet.draw.css'
 ];
 
+function bundle() {
+  return bundler.bundle()
+    .pipe(source('bundle.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+    .pipe(sourcemaps.write('./')) // writes .map file
+    .pipe(gulp.dest('public'));
+}
+
 gulp.task('clean', function(cb) {
     del('public', cb);
 });
@@ -49,13 +63,7 @@ gulp.task('concat-css', ['clean'], function() {
       .pipe(gulp.dest('public'));
 });
 
-gulp.task('concat-js', ['clean'], function() {
-    return gulp.src(jsdeps)
-      .pipe(concat('deps.js'))
-      .pipe(gulp.dest('public'));
-});
-
-gulp.task('concat', ['concat-css', 'concat-js']);
+gulp.task('concat', ['concat-css']);
 
 gulp.task('copy-draw-images', ['clean'], function() {
     return gulp.src(['node_modules/leaflet-draw/dist/images/**'])
@@ -93,12 +101,18 @@ gulp.task('less', ['clean'], function () {
 gulp.task('watch', function() {
     startExpress();
     livereload.listen();
-    gulp.watch([paths.html, paths.js, paths.less], ['build']);
+    gulp.watch([paths.html, paths.less], ['build']);
 });
 
+var bundler = watchify(browserify('./src/maps/lewisandclark.js', watchify.args));
+// add any other browserify options or transforms here
+bundler.transform('brfs');
+bundler.on('update', bundle); // on any dep update, runs the bundler
+
+gulp.task('js', bundle); // so you can run `gulp js` to build the file
 
 gulp.task('publish', ['deploy']);
-gulp.task('dev', ['watch', 'build']);
+gulp.task('dev', ['watch', 'build','js',]);
 gulp.task('build', ['concat', 'less', 'copy'])
 
 gulp.task('default', ['build']);
