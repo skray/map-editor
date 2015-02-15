@@ -1,7 +1,7 @@
-var $ = require('jquery');
 var L = require('leaflet');
+var mapapi = require('./mapapi');
+var MarkerForm = require('./MarkerForm');
 require('leaflet-draw');
-
 
 L.Icon.Default.imagePath = 'images';
 
@@ -18,6 +18,8 @@ init();
 function init() {
 
     buildMap();
+    registerHandlers();
+    loadMarkers();
 
 }
 
@@ -38,54 +40,62 @@ function buildMap(type) {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
                 maxZoom: 18
             }).addTo(map);
+            break;
+
+        // Initialise the FeatureGroup to store editable layers
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        // Initialise the draw control and pass it the FeatureGroup of editable layers
+        var drawControl = new L.Control.Draw({
+            draw: {
+                polyline: false,
+                polygon: false,
+                rectangle: false,
+                circle: false,
+                marker: {
+                    repeatMode: true
+                }
+            },
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        map.addControl(drawControl);
 
     }
+}
 
-    $.ajax({
-        type: "GET",
-        url: 'http://localhost:8080/maps/123/markers',
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function(markers) {
-            addMarkers(markers);
-        }
-    });
-
-    map.on('draw:created', function (e) {
-        var type = e.layerType,
-            layer = e.layer;
-
-        if (type === 'marker') {
-            $.ajax({
-                type: "POST",
-                url: 'http://localhost:8080/maps/123/markers',
-                data: JSON.stringify({latLng: [layer.getLatLng().lat, layer.getLatLng().lng]}),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function() {console.log('created');}
-            });
-            // Do marker specific actions
-        }
-
-        // Do whatever else you need to. (save to db, add to map etc)
-        map.addLayer(layer);
+function loadMarkers() {
+    mapapi.list().then(function gotMarkers(data) {
+        addMarkers(data);
     });
 }
 
 
 function addMarkers(markers) {
-    removeLayers();
-
     for(var i=0; i < markers.length; i++) {
-        layers.push(new L.marker(markers[i].latLng));
+        var layer = new L.marker(markers[i].latLng, {draggable: true});
+        layer.on('click', function(e) {
+            console.log(e.target.getLatLng());
+            MarkerForm.show(markers[i]);
+        })
+        layers.push(layer);
         map.addLayer(layers[i]);
     }
 }
 
-function removeLayers() {
-    for(var i=0; i < layers.length; i++) {
-        map.removeLayer(layers[i]);
-    }
+function registerHandlers() {
+    map.on('draw:created', function (e) {
+        var type = e.layerType,
+            layer = e.layer;
 
-    layers = [];
+        if (type === 'marker') {
+            layer.draggable = true;
+            mapapi.save({latLng: [layer.getLatLng().lat, layer.getLatLng().lng]});
+        }
+
+        // Do whatever else you need to. (save to db, add to map etc)
+        map.addLayer(layer);
+    });
 }

@@ -1,0 +1,20 @@
+#marker-form {
+    position: fixed;
+    width: 400px;
+    top: 0;
+    bottom: 0;
+    right: -400px;
+    background-color: rgba(255,255,255,.5);
+    transition: right .25s;
+    padding:15px;
+
+    &.shown {
+        right: 0;
+        transition: right .25s;
+    }
+
+    label, input, textarea {
+        display: block;
+        width: 100%;
+    }
+}
