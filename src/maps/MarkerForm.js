@@ -1,20 +1,49 @@
 var $ = require('jquery');
-var rivets = require('rivets');
+var React = require('react');
 
 var container = $('#marker-form');
 
-function MarkerForm() {
-    
-    console.log(container);
+function render() {
+    return ( 
+    <form>
+        <label>Title</label>
+        <input name="title" type="text" ref="title"/>
 
-    this.show = function show(marker) {
-        rivets.bind(container[0], {marker: marker});
-        container.addClass('shown');
-    };
+        <label>Date</label>
+        <input type="text" name="date" ref="date"/>
 
-    this.hide = function hide() {
-        container.removeClass('shown');
-    };
+        <label>Lat</label>
+        <input type="text" name="lat" ref="lat"/>
+        <label>Long</label>
+        <input type="text" name="long" ref="long"/>
+
+        <label>Description</label>
+        <textarea name="description" ref="description"></textarea>
+
+        <button>Cancel</button>
+        <button>Save</button>
+    </form>
+    );
 }
 
-module.exports = new MarkerForm();
+function show(marker) {
+    console.log(container);
+    container.addClass('shown');
+}
+
+function hide() {
+    container.removeClass('shown');
+}
+
+var MarkerForm = React.createClass({
+    render: render,
+    show: show,
+    hide: hide
+});
+
+React.render(
+  <MarkerForm />,
+  container[0]
+);
+
+module.exports = MarkerForm;

@@ -39,6 +39,7 @@ var cssdeps = [
 ];
 
 var bundler = watchify(browserify('./src/maps/lewisandclark.js', watchify.args));
+bundler.transform('reactify');
 bundler.transform('brfs');
 bundler.on('update', bundle);
 
