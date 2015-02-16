@@ -1,5 +1,6 @@
 var $ = require('jquery');
-var rivets = require('rivets');
+var Transparency = require('transparency');
+$.fn.render = Transparency.jQueryPlugin;
 
 var container = $('#marker-form');
 
@@ -8,7 +9,8 @@ function MarkerForm() {
     console.log(container);
 
     this.show = function show(marker) {
-        rivets.bind(container[0], {marker: marker});
+        console.log(marker);
+        container.render(marker);
         container.addClass('shown');
     };
 

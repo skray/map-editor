@@ -74,15 +74,15 @@ function loadMarkers() {
 
 
 function addMarkers(markers) {
-    for(var i=0; i < markers.length; i++) {
-        var layer = new L.marker(markers[i].latLng, {draggable: true});
+    markers.forEach(function eachMarker(marker) {
+        var layer = new L.marker([marker.latitude, marker.longitude], {draggable: true});
         layer.on('click', function(e) {
             console.log(e.target.getLatLng());
-            MarkerForm.show(markers[i]);
+            MarkerForm.show(marker);
         })
         layers.push(layer);
-        map.addLayer(layers[i]);
-    }
+        map.addLayer(layer);
+    })
 }
 
 function registerHandlers() {

@@ -2,7 +2,7 @@
     "name": "maps",
     "version": "0.0.1",
     "dependencies": {
-        "rivets": "0.8.0",
+        "transparency": "0.9.14",
         "leaflet-draw": "0.2.3",
         "leaflet": "0.7.3"
     },
