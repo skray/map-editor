@@ -34,34 +34,13 @@ function buildMap(type) {
             });
             break;
         default:
-            map = L.map('map').setView(center, initialZoom);
+            map = L.map('map',{drawControl: true}).setView(center, initialZoom);
 
             L.tileLayer('http://{s}.tiles.mapbox.com/v3/seankennethray.map-zjkq5g6o/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
                 maxZoom: 18
             }).addTo(map);
             break;
-
-        // Initialise the FeatureGroup to store editable layers
-        var drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
-
-        // Initialise the draw control and pass it the FeatureGroup of editable layers
-        var drawControl = new L.Control.Draw({
-            draw: {
-                polyline: false,
-                polygon: false,
-                rectangle: false,
-                circle: false,
-                marker: {
-                    repeatMode: true
-                }
-            },
-            edit: {
-                featureGroup: drawnItems
-            }
-        });
-        map.addControl(drawControl);
 
     }
 }
@@ -92,7 +71,7 @@ function registerHandlers() {
 
         if (type === 'marker') {
             layer.draggable = true;
-            mapapi.save({latLng: [layer.getLatLng().lat, layer.getLatLng().lng]});
+            mapapi.save({latitude: layer.getLatLng().lat, longitude: layer.getLatLng().lng});
         }
 
         // Do whatever else you need to. (save to db, add to map etc)

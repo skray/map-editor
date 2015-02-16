@@ -1,21 +1,23 @@
 var $ = require('jquery');
 var Transparency = require('transparency');
-$.fn.render = Transparency.jQueryPlugin;
+// $.fn.render = Transparency.jQueryPlugin;
 
-var container = $('#marker-form');
+var container = document.getElementById('marker-form');
 
 function MarkerForm() {
     
-    console.log(container);
-
     this.show = function show(marker) {
         console.log(marker);
-        container.render(marker);
-        container.addClass('shown');
+        Transparency.render(container,marker);
+        container.classList.add('shown');
     };
 
     this.hide = function hide() {
-        container.removeClass('shown');
+        container.classList.remove('shown');
+    };
+
+    this.save = function save() {
+
     };
 }
 
