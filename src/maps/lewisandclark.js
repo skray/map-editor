@@ -56,9 +56,8 @@ function addMarkers(markers) {
     markers.forEach(function eachMarker(marker) {
         var layer = new L.marker([marker.latitude, marker.longitude], {draggable: true});
         layer.on('click', function(e) {
-            console.log(e.target.getLatLng());
             MarkerForm.show(marker);
-        })
+        });
         layers.push(layer);
         map.addLayer(layer);
     })
@@ -69,9 +68,10 @@ function registerHandlers() {
         var type = e.layerType,
             layer = e.layer;
 
+console.log(e);
         if (type === 'marker') {
             layer.draggable = true;
-            mapapi.save({latitude: layer.getLatLng().lat, longitude: layer.getLatLng().lng});
+            MarkerForm.show({latitude: e.layer.getLatLng().lat, longitude: e.layer.getLatLng().lng});
         }
 
         // Do whatever else you need to. (save to db, add to map etc)
