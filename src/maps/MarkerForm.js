@@ -7,6 +7,7 @@ var mapapi = require('./mapapi');
 var container = document.getElementById('marker-form');
 var saveBtn = document.getElementById('marker-form-save');
 var formName = container.name;
+var currentMarker;
 
 function MarkerForm() {
 
@@ -22,17 +23,19 @@ function MarkerForm() {
         var marker = {};
 
         for(var i=0; i < form.elements.length; i++) {
-            console.log(form.elements[i]);
             var el = form.elements[i];
             if(el.name && el.value) {
                 marker[el.name] = el.value;
             }
         }
-
+        Object.keys(marker).forEach(function(key,index) {
+            currentMarker[key] = marker[key];
+        });
         mapapi.save(marker);
     }
     
     this.show = function show(marker) {
+        currentMarker = marker;
         Transparency.render(container,marker);
         container.classList.add('shown');
     };

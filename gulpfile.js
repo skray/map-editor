@@ -130,4 +130,4 @@ gulp.task('publish', ['deploy']);
 gulp.task('dev', ['watch', 'build']);
 gulp.task('build', ['bundle','concat', 'less', 'copy'])
 
-gulp.task('default', ['build']);
+gulp.task('default', ['dev']);

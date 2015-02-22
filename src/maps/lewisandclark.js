@@ -10,7 +10,7 @@ var initialZoom = 11;
 var layers = [];
 var map;
 var current = 0;
-var markers;
+var markers = [];
 var layers;
 
 init();
@@ -47,20 +47,21 @@ function buildMap(type) {
 
 function loadMarkers() {
     mapapi.list().then(function gotMarkers(data) {
-        addMarkers(data);
+        data.forEach(function eachMarker(marker) {
+            addMarker(marker);
+        });
     });
 }
 
 
-function addMarkers(markers) {
-    markers.forEach(function eachMarker(marker) {
-        var layer = new L.marker([marker.latitude, marker.longitude], {draggable: true});
-        layer.on('click', function(e) {
-            MarkerForm.show(marker);
-        });
-        layers.push(layer);
-        map.addLayer(layer);
-    })
+function addMarker(marker) {
+    var layer = new L.marker([marker.latitude, marker.longitude], {draggable: true});
+    layer.on('click', function(e) {
+        MarkerForm.show(marker);
+    });
+    layers.push(layer);
+    map.addLayer(layer);
+    markers.push(marker);
 }
 
 function registerHandlers() {
@@ -68,13 +69,10 @@ function registerHandlers() {
         var type = e.layerType,
             layer = e.layer;
 
-console.log(e);
         if (type === 'marker') {
-            layer.draggable = true;
-            MarkerForm.show({latitude: e.layer.getLatLng().lat, longitude: e.layer.getLatLng().lng});
+            var marker = {latitude: e.layer.getLatLng().lat, longitude: e.layer.getLatLng().lng};
+            addMarker(marker);
+            MarkerForm.show(marker);
         }
-
-        // Do whatever else you need to. (save to db, add to map etc)
-        map.addLayer(layer);
     });
 }
