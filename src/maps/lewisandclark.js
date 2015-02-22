@@ -12,6 +12,7 @@ var map;
 var current = 0;
 var markers = [];
 var layers;
+var drawnItems = new L.FeatureGroup();
 
 init();
 
@@ -34,15 +35,29 @@ function buildMap(type) {
             });
             break;
         default:
-            map = L.map('map',{drawControl: true}).setView(center, initialZoom);
+            map = L.map('map').setView(center, initialZoom);
 
             L.tileLayer('http://{s}.tiles.mapbox.com/v3/seankennethray.map-zjkq5g6o/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
                 maxZoom: 18
             }).addTo(map);
             break;
-
     }
+
+    map.addLayer(drawnItems);
+
+    // Initialise the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw({
+        draw: {
+            marker: {
+                repeatMode: true
+            }
+        },
+        edit: {
+            featureGroup: drawnItems
+        }
+    });
+    map.addControl(drawControl);
 }
 
 function loadMarkers() {
@@ -58,9 +73,10 @@ function addMarker(marker) {
     var layer = new L.marker([marker.latitude, marker.longitude], {draggable: true});
     layer.on('click', function(e) {
         MarkerForm.show(marker);
+        console.log(drawnItems);
     });
     layers.push(layer);
-    map.addLayer(layer);
+    drawnItems.addLayer(layer);
     markers.push(marker);
 }
 
