@@ -1,4 +1,5 @@
 var L = require('leaflet');
+var InfoMarker = require('./InfoMarker');
 var mapapi = require('./mapapi');
 var MarkerForm = require('./MarkerForm');
 require('leaflet-draw');
@@ -11,7 +12,6 @@ var layers = [];
 var map;
 var current = 0;
 var markers = [];
-var layers;
 var drawnItems = new L.FeatureGroup();
 
 init();
@@ -70,14 +70,9 @@ function loadMarkers() {
 
 
 function addMarker(marker) {
-    var layer = new L.marker([marker.latitude, marker.longitude], {draggable: true});
-    layer.on('click', function(e) {
-        MarkerForm.show(marker);
-        console.log(drawnItems);
-    });
-    layers.push(layer);
+    var layer = new InfoMarker(marker, {draggable: true});
     drawnItems.addLayer(layer);
-    markers.push(marker);
+    // markers.push(layer);
 }
 
 function registerHandlers() {

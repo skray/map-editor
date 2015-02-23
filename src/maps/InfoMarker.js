@@ -4,12 +4,12 @@ var MarkerForm = require('./MarkerForm');
 
 var InfoMarker = L.Marker.extend({
     options: {},
-    initialize: function initialize(latLng, options) {
-        L.Marker.prototype.initialize.call(this, latLng, options);
+    initialize: function initialize(marker, options) {
+        L.Marker.prototype.initialize.call(this, [marker.latitude, marker.longitude], options);
 
+        var that = this;
         this.on('click', function(e) {
-            MarkerForm.show(marker);
-            console.log(drawnItems);
+            MarkerForm.show(that);
         });
     },
     save: mapApi.save,

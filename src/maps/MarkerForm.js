@@ -1,4 +1,4 @@
-var $ = require('jquery');
+// var $ = require('jquery');
 var Transparency = require('transparency');
 var mapapi = require('./mapapi');
 // $.fn.render = Transparency.jQueryPlugin;
@@ -20,21 +20,19 @@ function MarkerForm() {
     function save() {
 
         var form = document[formName];
-        var marker = {};
 
         for(var i=0; i < form.elements.length; i++) {
             var el = form.elements[i];
             if(el.name && el.value) {
-                marker[el.name] = el.value;
+                currentMarker[el.name] = el.value;
             }
         }
-        Object.keys(marker).forEach(function(key,index) {
-            currentMarker[key] = marker[key];
-        });
-        mapapi.save(marker);
+
+        mapapi.save(currentMarker);
     }
     
     this.show = function show(marker) {
+        console.log(marker);
         currentMarker = marker;
         Transparency.render(container,marker);
         container.classList.add('shown');

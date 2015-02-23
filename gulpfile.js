@@ -45,7 +45,10 @@ bundler.on('update', bundle);
 function bundle() {
   console.log('bundling');
   return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .on('error', function(err) {
+      gutil.log(gutil.colors.bgRed('Browserify Error'), err.message);
+      this.emit('end');
+    })
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
