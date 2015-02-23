@@ -10,8 +10,7 @@ var initialZoom = 11;
 var layers = [];
 var map;
 var current = 0;
-var markers = [];
-var layers;
+var drawnItems = new L.FeatureGroup();
 
 init();
 
@@ -27,14 +26,13 @@ function buildMap(type) {
     switch(type) {
         case 'mapquest':
             map = L.map('map', {
-                drawControl: true,
                 layers: MQ.mapLayer(),
                 center: center,
                 zoom: initialZoom
             });
             break;
         default:
-            map = L.map('map',{drawControl: true}).setView(center, initialZoom);
+            map = L.map('map').setView(center, initialZoom);
 
             L.tileLayer('http://{s}.tiles.mapbox.com/v3/seankennethray.map-zjkq5g6o/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -43,6 +41,18 @@ function buildMap(type) {
             break;
 
     }
+
+    // Initialise the FeatureGroup to store editable layers
+    
+    map.addLayer(drawnItems);
+
+    // Initialise the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw({
+        edit: {
+            featureGroup: drawnItems
+        }
+    });
+    map.addControl(drawControl);
 }
 
 function loadMarkers() {
@@ -59,9 +69,8 @@ function addMarker(marker) {
     layer.on('click', function(e) {
         MarkerForm.show(marker);
     });
-    layers.push(layer);
-    map.addLayer(layer);
-    markers.push(marker);
+    layer.marker = marker;
+    drawnItems.addLayer(layer);
 }
 
 function registerHandlers() {
@@ -74,5 +83,13 @@ function registerHandlers() {
             addMarker(marker);
             MarkerForm.show(marker);
         }
+    });
+
+    map.on('draw:deleted', function (e) {
+        console.log(e);
+        e.layers.eachLayer(function(layer) {
+            console.log(layer);
+            mapapi.del(layer.marker);
+        });
     });
 }
