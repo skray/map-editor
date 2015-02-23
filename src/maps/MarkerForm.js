@@ -43,6 +43,12 @@ function MarkerForm() {
     this.hide = function hide() {
         container.classList.remove('shown');
     };
+
+    this.updateLatLng = function updateLatLng(latLng) {
+        currentMarker.latitude = latLng.lat;
+        currentMarker.longitude = latLng.lng;
+        Transparency.render(container,currentMarker);
+    };
 }
 
 module.exports = new MarkerForm();

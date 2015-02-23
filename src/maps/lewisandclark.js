@@ -66,9 +66,14 @@ function loadMarkers() {
 
 function addMarker(marker) {
     var layer = new L.marker([marker.latitude, marker.longitude], {draggable: true});
-    layer.on('click', function(e) {
+    layer.on('mousedown', function(e) {
         MarkerForm.show(marker);
     });
+
+    layer.on('drag', function(e) {
+        MarkerForm.updateLatLng(e.target.getLatLng());
+    });
+
     layer.marker = marker;
     drawnItems.addLayer(layer);
 }
@@ -86,9 +91,7 @@ function registerHandlers() {
     });
 
     map.on('draw:deleted', function (e) {
-        console.log(e);
         e.layers.eachLayer(function(layer) {
-            console.log(layer);
             mapapi.del(layer.marker);
         });
     });
