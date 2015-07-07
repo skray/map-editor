@@ -1,5 +1,23 @@
 var $ = require('jquery');
 
+module.exports.listMaps = function listMaps() {
+    return $.ajax({
+        type: "GET",
+        url: 'http://localhost:8080/maps',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+    });
+};
+
+module.exports.getMap = function getMap(id) {
+    return $.ajax({
+        type: "GET",
+        url: 'http://localhost:8080/maps/' + id,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+    });
+};
+
 module.exports.list = function list() {
     return $.ajax({
         type: "GET",

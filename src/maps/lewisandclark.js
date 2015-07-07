@@ -74,7 +74,7 @@ function addMarker(marker) {
         MarkerForm.updateLatLng(e.target.getLatLng());
     });
 
-    layer.marker = marker;
+    layer.marker = marker; 
     drawnItems.addLayer(layer);
 }
 

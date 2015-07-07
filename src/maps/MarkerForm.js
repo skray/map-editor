@@ -4,13 +4,14 @@ var mapapi = require('./mapapi');
 // $.fn.render = Transparency.jQueryPlugin;
 
 
-var container = document.getElementById('marker-form');
-var saveBtn = document.getElementById('marker-form-save');
-var formName = container.name;
-var currentMarker;
+
 
 function MarkerForm() {
-
+    var container = document.getElementById('marker-form');
+    var saveBtn = document.getElementById('marker-form-save');
+    var formName = container.name;
+    var currentMarker;
+    
     init();
 
     function init() {
