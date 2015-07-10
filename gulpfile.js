@@ -38,10 +38,10 @@ var cssdeps = [
     'node_modules/leaflet-draw/dist/leaflet.draw.css'
 ];
 
-var jsEntryPoints = ['./src/maps/lewisandclark.js', './src/index.js']
+var jsEntryPoints = ['./src/maps/edit.js', './src/index.js']
 var bundler = watchify(browserify(jsEntryPoints, watchify.args));
 bundler.transform('brfs');
-bundler.plugin('factor-bundle', {outputs: ['public/lewisandclark.js','public/index.js']});
+bundler.plugin('factor-bundle', {outputs: ['public/edit.js','public/index.js']});
 bundler.on('update', bundle);
 
 function bundle() {

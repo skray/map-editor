@@ -18,6 +18,16 @@ module.exports.getMap = function getMap(id) {
     });
 };
 
+module.exports.saveMap = function saveMap(map) {
+    return $.ajax({
+        type: "PUT",
+        url: 'http://localhost:8080/maps/' + map.id,
+        data: JSON.stringify(map),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+    });
+};
+
 module.exports.list = function list() {
     return $.ajax({
         type: "GET",
