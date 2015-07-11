@@ -87,6 +87,15 @@ function registerHandlers() {
         drawnItems.addLayer(layer);
     });
 
+    map.on('draw:edited', function drawEdited(e) {
+        e.layers.eachLayer(function eachLayer(layer) {
+            if(layer instanceof L.Polyline) {
+                mapData.line = layer.getLatLngs();
+                mapapi.saveMap(mapData);    
+            }
+        });    
+    });
+
     map.on('draw:deleted', function (e) {
         e.layers.eachLayer(function(layer) {
             mapapi.del(layer.marker);
