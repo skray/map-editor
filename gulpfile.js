@@ -38,14 +38,16 @@ var cssdeps = [
     'node_modules/leaflet-draw/dist/leaflet.draw.css'
 ];
 
-var bundler = watchify(browserify('./src/maps/lewisandclark.js', watchify.args));
+var jsEntryPoints = ['./src/maps/edit.js', './src/index.js']
+var bundler = watchify(browserify(jsEntryPoints, watchify.args));
 bundler.transform('brfs');
+bundler.plugin('factor-bundle', {outputs: ['public/edit.js','public/index.js']});
 bundler.on('update', bundle);
 
 function bundle() {
   console.log('bundling');
   return bundler.bundle()
-    .on('error', function(err) {
+    .on('error', function(err) { 
       gutil.log(gutil.colors.bgRed('Browserify Error'), err.message);
       this.emit('end');
     })

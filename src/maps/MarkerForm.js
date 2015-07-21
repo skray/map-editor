@@ -3,14 +3,12 @@ var Transparency = require('transparency');
 var mapapi = require('./mapapi');
 // $.fn.render = Transparency.jQueryPlugin;
 
-
-var container = document.getElementById('marker-form');
-var saveBtn = document.getElementById('marker-form-save');
-var formName = container.name;
-var currentMarker;
-
 function MarkerForm() {
-
+    var container = document.getElementById('marker-form');
+    var saveBtn = document.getElementById('marker-form-save');
+    var formName = container.name;
+    var currentMarker;
+    
     init();
 
     function init() {
@@ -18,28 +16,44 @@ function MarkerForm() {
     }
 
     function save() {
-
         var form = document[formName];
+        currentMarker['title'] = form['title'].value;
+        currentMarker['date'] =  form['title'].value;
+        currentMarker.setLatLng([form['latitude'].value, form['longitude'].value]);
+        currentMarker['description'] = form['description'].value; 
+        currentMarker.save();
+    }
 
-        for(var i=0; i < form.elements.length; i++) {
-            var el = form.elements[i];
-            if(el.name && el.value) {
-                currentMarker[el.name] = el.value;
+    function renderMarker(marker) {
+        var directives = {
+            latitude: {
+                value: function() {
+                    return this.getLatLng().lat;
+                }
+            },
+            longitude: {
+                value: function() {
+                    return this.getLatLng().lng;
+                }
             }
-        }
-
-        mapapi.save(currentMarker);
+        };
+        Transparency.render(container, marker, directives);
     }
     
     this.show = function show(marker) {
         console.log(marker);
         currentMarker = marker;
-        Transparency.render(container,marker);
+        renderMarker(marker);
         container.classList.add('shown');
     };
 
     this.hide = function hide() {
         container.classList.remove('shown');
+    };
+
+    this.updateLatLng = function updateLatLng(latLng) {
+        currentMarker.setLatLng(latLng);
+        renderMarker(marker);
     };
 }
 
