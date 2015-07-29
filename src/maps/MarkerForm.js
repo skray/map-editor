@@ -6,6 +6,7 @@ var mapapi = require('./mapapi');
 function MarkerForm() {
     var container = document.getElementById('marker-form');
     var saveBtn = document.getElementById('marker-form-save');
+    var cancelBtn = document.getElementById('marker-form-cancel');
     var formName = container.name;
     var currentMarker;
     
@@ -13,6 +14,7 @@ function MarkerForm() {
 
     function init() {
         saveBtn.addEventListener('click', save);
+        cancelBtn.addEventListener('click', this.hide);
     }
 
     function save() {
@@ -41,7 +43,6 @@ function MarkerForm() {
     }
     
     this.show = function show(marker) {
-        console.log(marker);
         currentMarker = marker;
         renderMarker(marker);
         container.classList.add('shown');

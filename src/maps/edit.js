@@ -1,16 +1,9 @@
-var L = require('leaflet');
+var Map = require('./Map');
 var mapapi = require('./mapapi');
 var MarkerForm = require('./MarkerForm');
 var InfoMarker = require('./InfoMarker');
-require('leaflet-draw');
 
-L.Icon.Default.imagePath = 'images';
-
-var layers = [];
 var map;
-var mapData;
-var current = 0;
-var drawnItems = new L.FeatureGroup();
 
 init();
 
@@ -20,90 +13,27 @@ function init() {
 }
 
 function buildMap(mapResponse) {
-    // hold data
-    mapData = mapResponse;
-
-    //mapquest
-    // map = L.map('map', {
-    //     layers: MQ.mapLayer(),
-    //     center: center,
-    //     zoom: initialZoom
-    // });
-    //mapbox
-    map = L.map('map').setView(mapData.center, mapData.zoom);
-
-    L.tileLayer('http://{s}.tiles.mapbox.com/v3/seankennethray.map-zjkq5g6o/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        maxZoom: 18
-    }).addTo(map);
-
-    // Initialise the FeatureGroup to store editable layers
-    map.addLayer(drawnItems);
-
-    // Initialise the draw control and pass it the FeatureGroup of editable layers
-    var drawControl = new L.Control.Draw({
-        draw: {
-            marker: {
-                repeatMode: true
-            }
-        },
-        edit: {
-            featureGroup: drawnItems
-        }
-    });
-    map.addControl(drawControl);
-
-    if(mapData.line) {
-        drawnItems.addLayer(new L.polyline(mapData.line));
-    }
-
-    if(mapData.markers) {
-        mapData.markers.forEach(function addEm(latLng, i, arr) {
-            arr[i] = addMarker(latLng);
-        });
-    }
-
+    map = new Map(mapResponse);
     registerHandlers();
 }
 
-function addMarker(latLng) {
-    var layer = new InfoMarker(latLng, mapData, {draggable: true});
-    drawnItems.addLayer(layer);
-    return layer;
-}
-
 function registerHandlers() {
-    map.on('draw:created', function (e) {
+    map.slippyMap.on('draw:created', function (e) {
         var type = e.layerType,
             layer = e.layer;
 
         if (type === 'marker') {
-            var infoMarker = addMarker(e.layer.getLatLng());
-            mapData.markers.push(infoMarker);
-            MarkerForm.show(infoMarker);
+            map.addMarker(e.layer.getLatLng());
         }
 
-        if(type == 'polyline') {
-            mapData.line = e.layer.getLatLngs();
-            mapapi.saveMap(mapData);
-        }
-
-        drawnItems.addLayer(layer);
     });
 
-    map.on('draw:edited', function drawEdited(e) {
+    map.slippyMap.on('draw:edited', function drawEdited(e) {
         e.layers.eachLayer(function eachLayer(layer) {
             if(layer instanceof L.Polyline) {
-                mapData.line = layer.getLatLngs();
-                mapapi.saveMap(mapData);    
+                map.updateLine(layer.getLatLngs());
             }
         });    
-    });
-
-    map.on('draw:deleted', function (e) {
-        e.layers.eachLayer(function(layer) {
-            mapapi.del(layer.marker);
-        });
     });
 }
 

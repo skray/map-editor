@@ -14,9 +14,8 @@ var InfoMarker = L.Marker.extend({
         });
     },
     save: function() {
-        mapApi.saveMap(this.map);
-    },
-    del: mapApi.del
+        this.map.save();
+    }
 });
 
 module.exports = InfoMarker;
