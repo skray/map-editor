@@ -14,7 +14,7 @@ function Map(mapData) {
 	// pull off relevant info
 	this.id = mapData.id;
 	this.line = mapData.line || [];
-	this.markers = mapData.markers || [];
+	this.markers = [];
 	this.name = mapData.name || '';
 	this.center = mapData.center || [0, 0];
 	this.zoom = mapData.zoom || 1;
@@ -26,8 +26,8 @@ function Map(mapData) {
 	this.slippyMap.addLayer(this.drawnItems);
 	this.drawnItems.addLayer(new L.polyline(mapData.line));
 
-    mapData.markers.forEach(function addEm(latLng, i, arr) {
-        arr[i] = that.addMarker(latLng);
+    mapData.markers.forEach(function addEm(markerData, i, arr) {
+        arr[i] = that.addMarker(markerData);
     });
 
 	// Initialise the draw control and pass it the FeatureGroup of editable layers
@@ -50,8 +50,8 @@ function Map(mapData) {
 
 }
 
-Map.prototype.addMarker = function addMarker(latLng) {
-	var marker = new InfoMarker(latLng, this, {draggable: true})
+Map.prototype.addMarker = function addMarker(markerData) {
+	var marker = new InfoMarker(markerData, this, {draggable: true})
 	this.markers.push(marker);
     this.drawnItems.addLayer(marker);
     MarkerForm.show(marker);
@@ -63,13 +63,13 @@ Map.prototype.updateLine = function updateLine(lineLatLngs) {
 };
 
 Map.prototype.save = function save() {
-	mapapi.saveMap(this.serialize);	
+	mapapi.saveMap(this.serialize());	
 };
 
 Map.prototype.serialize = function serialize() {
-	var justLatLngs = [];
-	this.markers.forEach(function(marker) {
-	    justLatLngs.push([marker.getLatLng().lat, marker.getLatLng().lng]);
+	var serializedMarkers = [];
+	this.markers.forEach(function serializeMarkers(marker) {
+	    serializedMarkers.push(marker.serialize());
 	});
 
 	var serializedMap = {
@@ -78,7 +78,7 @@ Map.prototype.serialize = function serialize() {
 		center: this.center,
 		zoom: this.zoom,
 		line: this.line,
-		markers: justLatLngs
+		markers: serializedMarkers
 	};
 
 	return serializedMap;

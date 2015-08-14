@@ -23,7 +23,7 @@ function registerHandlers() {
             layer = e.layer;
 
         if (type === 'marker') {
-            map.addMarker(e.layer.getLatLng());
+            map.addMarker({latLng: e.layer.getLatLng()});
         }
 
     });

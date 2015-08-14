@@ -21,7 +21,7 @@ module.exports.getMap = function getMap(id) {
 module.exports.saveMap = function saveMap(serializedMap) {
     return $.ajax({
         type: "PUT",
-        url: 'http://localhost:8080/maps/' + map.id,
+        url: 'http://localhost:8080/maps/' + serializedMap.id,
         data: JSON.stringify(serializedMap),
         contentType: "application/json; charset=utf-8",
         dataType: "json"

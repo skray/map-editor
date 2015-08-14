@@ -20,10 +20,10 @@ function MarkerForm() {
     function save() {
         var form = document[formName];
         currentMarker['title'] = form['title'].value;
-        currentMarker['date'] =  form['title'].value;
+        currentMarker['date'] =  form['date'].value;
         currentMarker.setLatLng([form['latitude'].value, form['longitude'].value]);
         currentMarker['description'] = form['description'].value; 
-        currentMarker.save();
+        currentMarker.map.save();
     }
 
     function renderMarker(marker) {
