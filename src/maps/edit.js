@@ -35,6 +35,10 @@ function registerHandlers() {
             }
         });    
     });
+
+    map.slippyMap.on('zoomend', function zoomed(e) {
+        map.resizeIcons();
+    });
 }
 
 function getQueryParams() {
