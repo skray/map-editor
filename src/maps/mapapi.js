@@ -1,12 +1,10 @@
+var Firebase = require('firebase');
+var mapsRef = new Firebase('https://amber-inferno-2147.firebaseio.com/maps');
+
 var $ = require('jquery');
 
-module.exports.listMaps = function listMaps() {
-    return $.ajax({
-        type: "GET",
-        url: 'http://localhost:8080/maps',
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"
-    });
+module.exports.listMaps = function listMaps(callback) {
+    mapsRef.on('value', callback);
 };
 
 module.exports.getMap = function getMap(id) {
